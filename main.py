@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import requests
 import re
+from mangum import Mangum
 
 app = FastAPI(title="Instagram Audio Downloader API")
 
@@ -66,7 +67,7 @@ async def get_audio(url: str = Query(..., description="Instagram Reel URL")):
                 status_code=404,
                 content={
                     "success": False,
-                    "message": "Video URL nahi mila. Reel public hai ki nahi check karo.",
+                    "message": "Video URL nahi mila.",
                     "raw_response": data
                 }
             )
@@ -101,4 +102,7 @@ async def get_audio(url: str = Query(..., description="Instagram Reel URL")):
         return JSONResponse(
             status_code=500,
             content={"success": False, "message": f"Server error: {str(e)}"}
-      )
+        )
+
+# Vercel ke liye zaroori
+handler = Mangum(app)
